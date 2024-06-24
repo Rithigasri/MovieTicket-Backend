@@ -107,7 +107,7 @@ public class MovieController {
             return ResponseEntity.badRequest().body("Seat numbers cannot be empty.");
         }
 
-        // Validate seat numbers and types
+
         Pattern elitePattern = Pattern.compile("^[A-B][1-9]$|^[A-B]10$");
         Pattern premiumPattern = Pattern.compile("^[C-G][1-9]$|^[C-G]10$");
         Pattern executivePattern = Pattern.compile("^[H-I][1-9]$|^[H-I]10$");
