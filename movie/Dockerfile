@@ -1,11 +1,23 @@
-# Use the official Gradle image to build the application
-FROM gradle:7.3.3-jdk11 AS build
-WORKDIR /app
-COPY . .
-RUN gradle build --no-daemon
-
-# Use the official OpenJDK image to run the application
+# Use the official OpenJDK image as a parent image
 FROM openjdk:11-jre-slim
+
+# Set the working directory
 WORKDIR /app
-COPY --from=build /app/build/libs/movie-0.0.1-SNAPSHOT.jar /app/movie-0.0.1-SNAPSHOT.jar
-ENTRYPOINT ["java", "-jar", "/app/movie-0.0.1-SNAPSHOT.jar"]
+
+# Copy the Gradle build files
+COPY build.gradle settings.gradle /app/
+
+# Copy the application source
+COPY src /app/src
+
+# Install Gradle
+RUN apt-get update && apt-get install -y gradle
+
+# Build the application
+RUN gradle build -x test
+
+# Copy the built jar file to the container
+COPY build/libs/*.jar app.jar
+
+# Run the jar file
+ENTRYPOINT ["java", "-jar", "app.jar"]
